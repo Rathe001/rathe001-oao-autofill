@@ -1,0 +1,21 @@
+{
+  "manifest_version": 2,
+  "name": "OAO Autofill",
+  "author": "Josh Tummel",
+  "version": "1.0.1",
+  "description": "A simple autofill utility for use with the OAO 4.0 application.",
+  "browser_action": {
+    "default_popup": "index.html"
+  },
+  "icons": {
+    "16": "bt.png",
+    "48": "bt.png",
+    "128": "bt.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "permissions": ["storage"]
+}
