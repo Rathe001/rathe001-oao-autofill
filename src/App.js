@@ -162,7 +162,6 @@ const App = ({ classes }) => {
           >
             Autofill
           </button>
-
           <button
             type="button"
             className={classes.btnPrimary}
