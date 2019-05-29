@@ -12,10 +12,12 @@
     "48": "bt.png",
     "128": "bt.png"
   },
+  "content_security_policy": "script-src 'self' 'sha256-GgRxrVOKNdB4LrRsVPDSbzvfdV4UqglmviH9GoBJ5jk='; object-src 'self'",
+  "permissions": ["storage", "activeTab"],
   "content_scripts": [
     {
-      "matches": ["<all_urls>"]
+      "matches": ["<all_urls>"],
+      "js": ["/static/js/main.chunk.js"]
     }
-  ],
-  "permissions": ["storage"]
+  ]
 }
