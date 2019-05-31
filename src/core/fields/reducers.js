@@ -28,7 +28,6 @@ const reducers = (state = {}, action) => {
         },
       };
     case actions.ADD_DOMAIN:
-      console.log(action.payload);
       if (state.data[actions.payload]) {
         return state;
       }
