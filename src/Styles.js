@@ -54,6 +54,9 @@ const styles = {
     color: '#999',
     padding: '0 5px',
   },
+  domain: {
+    float: 'right',
+  },
   btnPrimary: {
     cursor: 'pointer',
     background: '#008ff5',

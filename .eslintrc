@@ -1,0 +1,19 @@
+{
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "globals": {
+    "chrome": true
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "paths": ["src", "./"]
+      }
+    }
+  },
+  "extends": ["airbnb", "prettier"],
+  "plugins": ["prettier"],
+  "rules": {}
+}

@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'react-jss';
+import { connect } from 'react-redux';
+import domainActions from 'core/domain/actions';
+import profileActions from 'core/profile/actions';
+import fieldsActions from 'core/fields/actions';
 import styles from './Styles';
 
 function getInputType(field) {
@@ -16,53 +20,19 @@ function getInputType(field) {
   }
 }
 
-const App = ({ classes }) => {
-  const [domain, setDomain] = useState('');
-  const [fields, setFields] = useState({});
-  const [profile, setProfile] = useState('profile1');
-
-  useEffect(updateFields, []);
-
-  function updateFields(newProfile) {
-    chrome.tabs.query({ active: true, windowId: chrome.windows.WINDOW_ID_CURRENT }, function(tabs) {
-      const newDomain = tabs[0].url.split('://')[1].split('/')[0];
-      setDomain(newDomain);
-
-      const selectedProfile = newProfile || profile;
-
-      chrome.tabs.executeScript(
-        {
-          code: '(' + getFields + ')();',
-        },
-        results => {
-          results[0].forEach(r => {
-            if (!localStorage.getItem(`${newDomain}_${selectedProfile}_field_${r.clientId}`)) {
-              localStorage.setItem(
-                `${newDomain}_${selectedProfile}_field_${r.clientId}`,
-                JSON.stringify(r)
-              );
-            }
-          });
-
-          const objResults = results[0].reduce((obj, item) => {
-            return {
-              ...obj,
-              [item.clientId]: JSON.parse(
-                localStorage.getItem(`${newDomain}_${selectedProfile}_field_${item.clientId}`)
-              ),
-            };
-          }, {});
-
-          setFields(objResults);
-        }
-      );
-    });
-  }
-
-  function getFields() {
+const App = ({
+  classes,
+  setDomain,
+  setProfile,
+  setFields,
+  setFieldValue,
+  profileName,
+  domainName,
+  fieldsData,
+}) => {
+  function scrubFields() {
     const fields = Array.from(document.querySelectorAll('[class*="field-type--"]')).map((n, i) => {
       const elLabel = n.children[0].querySelector('label');
-      const elInput = n.children[0].querySelector('input, select');
 
       return {
         id: i,
@@ -77,10 +47,39 @@ const App = ({ classes }) => {
     return fields.filter(f => !!f.clientId);
   }
 
+  function getFields() {
+    chrome.tabs.executeScript(
+      {
+        code: `(${scrubFields})();`,
+      },
+      results =>
+        setFields(
+          domainName,
+          profileName,
+          results[0].reduce(
+            (obj, item) => ({
+              ...obj,
+              [item.clientId]: item,
+            }),
+            {},
+          ),
+        ),
+    );
+  }
+
+  useEffect(() => {
+    if (chrome && chrome.tabs && chrome.tabs.query) {
+      chrome.tabs.query({ active: true, windowId: chrome.windows.WINDOW_ID_CURRENT }, tabs => {
+        setDomain(tabs[0].url.split('://')[1].split('/')[0]);
+        getFields();
+      });
+    }
+  }, []);
+  /*
   function setPageFields(fields) {
     Object.keys(fields).map(key => {
       const elField = document.querySelector(
-        `[data-name="${key}"] input, [data-name="${key}"] select`
+        `[data-name="${key}"] input, [data-name="${key}"] select`,
       );
 
       if (elField) {
@@ -92,7 +91,7 @@ const App = ({ classes }) => {
           elField.dispatchEvent(
             new Event('input', {
               target: elField,
-            })
+            }),
           );
 
           setTimeout(() => {}, 1500);
@@ -130,34 +129,36 @@ const App = ({ classes }) => {
   const autofill = fields => {
     chrome.tabs.executeScript(
       {
-        code: '(' + setPageFields + ')(' + JSON.stringify(fields) + ');',
+        code: `(${setPageFields})(${JSON.stringify(fields)});`,
       },
-      () => {}
+      () => {},
     );
   };
 
   const next = () => {
     chrome.tabs.executeScript(
       {
-        code: '(' + clickNext + ')(' + JSON.stringify(fields) + ');',
+        code: `(${clickNext})(${JSON.stringify(fields)});`,
       },
-      () => {}
+      () => {},
     );
   };
-
+*/
   return (
     <main>
       <h1 className={classes.header}>
-        OAO 4.0 Autofill <small className={classes.version}>1.0.1 beta</small>
+        <small className={classes.domain}>{domainName}</small>
+        OAO 4.0 Autofill
+        <small className={classes.version}>1.0.1 beta</small>
       </h1>
       <div className={classes.tools}>
         <div className={classes.cellL}>
           <button
             type="button"
             className={classes.btnPrimary}
-            disabled={fields.length === 0}
+            disabled={fieldsData.length === 0}
             onClick={() => {
-              autofill(fields);
+              // autofill(fields);
             }}
           >
             Autofill
@@ -165,16 +166,16 @@ const App = ({ classes }) => {
           <button
             type="button"
             className={classes.btnPrimary}
-            disabled={fields.length === 0}
+            disabled={fieldsData.length === 0}
             onClick={() => {
-              next();
+              // next();
             }}
           >
             Next Page
           </button>
         </div>
         <div className={classes.cellR}>
-          <select value={profile} onChange={profileOnChange}>
+          <select value={profileName} onChange={e => setProfile(e.target.value)}>
             <option value="profile1">Profile 1</option>
             <option value="profile2">Profile 2</option>
             <option value="profile3">Profile 3</option>
@@ -190,21 +191,24 @@ const App = ({ classes }) => {
       </div>
       <div className={classes.fields}>
         <h2>Fields</h2>
-        {Object.keys(fields).length > 0 ? (
+        {Object.keys(fieldsData).length > 0 ? (
           <ul>
-            {Object.keys(fields)
-              .map(key => fields[key])
+            {Object.keys(fieldsData)
+              .map(key => fieldsData[key])
               .map(field => (
                 <li key={field.id} className={classes.field}>
-                  <label className={classes.label}>
+                  <label className={classes.label} htmlFor={field.clientId}>
                     <span className={classes.labelText}>
-                      {field.label}:<br />
+                      {field.label}
+                      :
+                      <br />
                       <small className={classes.clientId}>{field.clientId}</small>
                     </span>
                     <span className={classes.labelInput}>
                       <input
+                        id={field.clientId}
                         type={getInputType(field.type)}
-                        onChange={e => inputOnChange(e, field)}
+                        onChange={e => setFieldValue(field, e.target.value)}
                         value={field.value}
                         checked={field.value}
                       />
@@ -224,9 +228,9 @@ const App = ({ classes }) => {
           <button
             type="button"
             className={classes.btnPrimary}
-            disabled={fields.length === 0}
+            disabled={fieldsData.length === 0}
             onClick={() => {
-              autofill(fields);
+              // autofill(fields);
             }}
           >
             Autofill
@@ -234,9 +238,9 @@ const App = ({ classes }) => {
           <button
             type="button"
             className={classes.btnPrimary}
-            disabled={fields.length === 0}
+            disabled={fieldsData.length === 0}
             onClick={() => {
-              next();
+              // next();
             }}
           >
             Next Page
@@ -249,6 +253,31 @@ const App = ({ classes }) => {
 
 App.propTypes = {
   classes: PropTypes.shape({}).isRequired,
+  profileName: PropTypes.string.isRequired,
+  domainName: PropTypes.string.isRequired,
+  fieldsData: PropTypes.shape({}).isRequired,
+  setDomain: PropTypes.func.isRequired,
+  setProfile: PropTypes.func.isRequired,
+  setFields: PropTypes.func.isRequired,
+  setFieldValue: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles)(App);
+const mapStateToProps = ({ profile, domain, fields }) => ({
+  profileName: profile.name,
+  domainName: domain.name,
+  fieldsData: fields.data,
+});
+
+const mapDispatchToProps = {
+  setDomain: domainActions.setName,
+  setProfile: profileActions.setName,
+  setFields: fieldsActions.setData,
+  setFieldValue: fieldsActions.setValue,
+};
+
+const StyledApp = withStyles(styles)(App);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(StyledApp);
