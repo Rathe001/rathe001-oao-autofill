@@ -11,6 +11,7 @@ const initialState = {
     name: '',
   },
   fields: {
+    current: [],
     data: {},
   },
   profile: {

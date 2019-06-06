@@ -1,27 +1,24 @@
 const actions = {
   SET_DATA: 'FIELDS_SET_DATA',
-  setData: (domain, profile, data) => ({
+  setData: payload => ({
     type: actions.SET_DATA,
-    payload: {
-      domain,
-      profile,
-      data,
-    },
+    payload,
+  }),
+
+  SET_CURRENT: 'FIELDS_SET_CURRENT',
+  setCurrent: payload => ({
+    type: actions.SET_CURRENT,
+    payload,
   }),
 
   SET_VALUE: 'FIELDS_SET_VALUE',
-  setValue: (field, value) => ({
+  setValue: (key, field, value) => ({
     type: actions.SET_VALUE,
     payload: {
+      key,
       field,
       value,
     },
-  }),
-
-  ADD_DOMAIN: 'FIELDS_ADD_DOMAIN',
-  addDomain: payload => ({
-    type: actions.ADD_DOMAIN,
-    payload,
   }),
 };
 

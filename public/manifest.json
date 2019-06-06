@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "OAO 4.0 Autofill",
   "author": "Josh Tummel",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A simple autofill utility for use with Bottomline's CES OAO 4.0 application. Supports client specific data, as well as profiles per client.",
   "browser_action": {
     "default_popup": "index.html"

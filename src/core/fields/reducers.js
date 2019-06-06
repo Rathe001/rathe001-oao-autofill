@@ -6,37 +6,24 @@ const reducers = (state = {}, action) => {
       return {
         ...state,
         data: {
+          ...action.payload,
           ...state.data,
-          [action.payload.domain]: {
-            ...state.data[action.payload.domain],
-            [action.payload.profile]: {
-              ...action.payload.data,
-              ...state.data[action.payload.domain][action.payload.profile],
-            },
-          },
         },
+      };
+    case actions.SET_CURRENT:
+      return {
+        ...state,
+        current: action.payload,
       };
     case actions.SET_VALUE:
       return {
         ...state,
         data: {
           ...state.data,
-          [action.payload.field.clientId]: {
-            ...state.data[action.payload.field.clientId],
+          [action.payload.key]: {
+            ...state.data[action.payload.key],
             value: action.payload.value,
           },
-        },
-      };
-    case actions.ADD_DOMAIN:
-      if (state.data[actions.payload]) {
-        return state;
-      }
-
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          [action.payload]: {},
         },
       };
     default:
