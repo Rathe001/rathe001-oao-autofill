@@ -63,13 +63,15 @@ const App = ({
 }) => {
   function scrubFields() {
     const fields = Array.from(document.querySelectorAll('[class*="field-type--"]')).map((n, i) => {
-      const elLabel = n.children[0].querySelector('label');
+      const elLabel = n.querySelector('label');
 
       return {
         id: i,
-        label: elLabel ? elLabel.innerText : '',
+        label: elLabel ? elLabel.innerText : n.innerText,
         clientId: n.getAttribute('data-name'),
         type: n.classList[1].split('field-type--')[1] || '',
+        hidden: n.classList.contains('is-hiden'),
+        required: n.classList.contains('required'),
         value: '',
       };
     });
@@ -148,13 +150,17 @@ const App = ({
         <h2>Fields</h2>
         {currentFields.length > 0 ? (
           <ul>
-            {currentFields.map(clientId => (
-              <Field
-                key={clientId}
-                id={`${prefix}${clientId}`}
-                data={fieldsData[`${prefix}${clientId}`]}
-              />
-            ))}
+            {currentFields.map(
+              clientId =>
+                fieldsData[`${prefix}${clientId}`] &&
+                fieldsData[`${prefix}${clientId}`].type !== 'html-element' && (
+                  <Field
+                    key={clientId}
+                    id={`${prefix}${clientId}`}
+                    data={fieldsData[`${prefix}${clientId}`]}
+                  />
+                ),
+            )}
           </ul>
         ) : (
           <p className={classes.noFields}>

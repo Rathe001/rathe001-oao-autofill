@@ -29,20 +29,52 @@ function setPageFields(fields) {
       `[data-name="${field.clientId}"] input, [data-name="${field.clientId}"] select`,
     );
 
+    const e = {
+      bubbles: true,
+      target: {
+        value: field.value,
+      },
+    };
+
+    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype,
+      'value',
+    ).set;
+
+    const nativeSelectValueSetter = Object.getOwnPropertyDescriptor(
+      window.HTMLSelectElement.prototype,
+      'value',
+    ).set;
+
     if (elField) {
-      if (field.type === 'boolean' || field.type === 'multi-disclosures') {
-        elField.checked = !!field.value;
-        elField.dispatchEvent(new Event('blur'));
-      } else if (field.type === 'auto-complete') {
-        elField.click();
-        elField.value = field.value;
-        elField.dispatchEvent(new Event('keyup'));
-      } else if (field.type === 'amount-slider') {
-        elField.value = field.value;
-        elField.dispatchEvent(new Event('change'));
-      } else {
-        elField.value = field.value;
-        elField.dispatchEvent(new Event('blur'));
+      switch (field.type) {
+        case 'lookup':
+          nativeSelectValueSetter.call(elField, field.value);
+          elField.dispatchEvent(new Event('change', e));
+          break;
+        case 'disclosure':
+        case 'boolean':
+        case 'multi-disclosures':
+          if (elField.checked !== field.value) {
+            elField.click();
+          }
+          elField.dispatchEvent(new Event('blur', e));
+          break;
+        case 'amount-slider':
+          nativeInputValueSetter.call(elField, field.value);
+          elField.dispatchEvent(new Event('change', e));
+          break;
+        case 'auto-complete':
+          elField.dispatchEvent(new Event('focus'));
+          nativeInputValueSetter.call(elField, field.value);
+          elField.dispatchEvent(new Event('change', e));
+          elField.dispatchEvent(new Event('keyup'));
+          setTimeout(() => elField.dispatchEvent(new Event('blur')), 2000);
+          break;
+        default:
+          nativeInputValueSetter.call(elField, field.value || '');
+          elField.dispatchEvent(new Event('change', e));
+          break;
       }
     }
   });

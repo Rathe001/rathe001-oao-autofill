@@ -76,7 +76,11 @@ const Field = ({ classes, setFieldValue, id, data = {} }) => {
             checked={data.value}
           />
           <br />
-          <small className={classes.type}>{data.type}</small>
+          <small className={classes.type}>
+            {data.hidden && 'hidden '}
+            {data.required ? 'required ' : 'optional '}
+            {data.type && `${data.type}`}
+          </small>
         </span>
       </label>
     </li>
