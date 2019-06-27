@@ -24,6 +24,8 @@ const styles = {
 };
 
 function setPageFields(fields) {
+  let autocompleteCount = 0;
+
   fields.forEach(field => {
     const elField = document.querySelector(
       `[data-name="${field.clientId}"] input, [data-name="${field.clientId}"] select`,
@@ -51,8 +53,9 @@ function setPageFields(fields) {
         case 'lookup':
           nativeSelectValueSetter.call(elField, field.value);
           elField.dispatchEvent(new Event('change', e));
+          setTimeout(() => elField.dispatchEvent(new Event('blur', e)), 1000);
+
           break;
-        case 'disclosure':
         case 'boolean':
         case 'multi-disclosures':
           if (elField.checked !== field.value) {
@@ -65,11 +68,14 @@ function setPageFields(fields) {
           elField.dispatchEvent(new Event('change', e));
           break;
         case 'auto-complete':
-          elField.dispatchEvent(new Event('focus'));
-          nativeInputValueSetter.call(elField, field.value);
-          elField.dispatchEvent(new Event('change', e));
-          elField.dispatchEvent(new Event('keyup'));
-          setTimeout(() => elField.dispatchEvent(new Event('blur')), 2000);
+          autocompleteCount += 1;
+          // Cannot fire 2 auto completes simultaneously
+          setTimeout(() => {
+            elField.dispatchEvent(new Event('focus'));
+            nativeInputValueSetter.call(elField, field.value);
+            elField.dispatchEvent(new Event('change', e));
+            setTimeout(() => elField.dispatchEvent(new Event('blur')), 1000);
+          }, autocompleteCount * 1000);
           break;
         default:
           nativeInputValueSetter.call(elField, field.value || '');

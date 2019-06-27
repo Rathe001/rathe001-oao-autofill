@@ -153,7 +153,9 @@ const App = ({
             {currentFields.map(
               clientId =>
                 fieldsData[`${prefix}${clientId}`] &&
-                fieldsData[`${prefix}${clientId}`].type !== 'html-element' && (
+                fieldsData[`${prefix}${clientId}`].type !== 'html-element' &&
+                fieldsData[`${prefix}${clientId}`].type !== 'disclosure' &&
+                fieldsData[`${prefix}${clientId}`].type !== 'output' && (
                   <Field
                     key={clientId}
                     id={`${prefix}${clientId}`}
