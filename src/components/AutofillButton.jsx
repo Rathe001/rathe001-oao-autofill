@@ -58,7 +58,7 @@ function setPageFields(fields) {
           break;
         case 'boolean':
         case 'multi-disclosures':
-          if (elField.checked !== field.value) {
+          if (!!elField.checked !== !!field.value) {
             elField.click();
           }
           elField.dispatchEvent(new Event('blur', e));

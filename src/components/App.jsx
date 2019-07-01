@@ -124,7 +124,7 @@ const App = ({
       <h1 className={classes.header}>
         <small className={classes.domain}>{domainName}</small>
         OAO 4.0 Autofill
-        <small className={classes.version}>1.0.2 beta</small>
+        <small className={classes.version}>1.1.2</small>
       </h1>
       <div className={classes.tools}>
         <div className={classes.cellL}>
