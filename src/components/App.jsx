@@ -31,6 +31,9 @@ const styles = {
   domain: {
     float: 'right',
   },
+  intro: {
+    margin: [0, 0, 25, 0],
+  },
   tools: {
     display: 'flex',
     padding: 15,
@@ -159,6 +162,9 @@ const App = ({
       </div>
       <div className={classes.fields}>
         <h2>Fields</h2>
+        <p className={classes.intro}>
+          Note: Checkboxes must be toggled on and then off to set a false value.
+        </p>
         {currentFields.length > 0 ? (
           <ul>
             {currentFields.map(
@@ -197,6 +203,7 @@ App.propTypes = {
     domain: PropTypes.shape({}).isRequired,
     version: PropTypes.shape({}).isRequired,
     tools: PropTypes.shape({}).isRequired,
+    intro: PropTypes.shape({}).isRequired,
     cellL: PropTypes.shape({}).isRequired,
     cellR: PropTypes.shape({}).isRequired,
     fields: PropTypes.shape({}).isRequired,

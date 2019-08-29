@@ -51,9 +51,22 @@ function setPageFields(fields) {
     if (elField) {
       switch (field.type) {
         case 'lookup':
-          nativeSelectValueSetter.call(elField, field.value);
-          elField.dispatchEvent(new Event('change', e));
-          setTimeout(() => elField.dispatchEvent(new Event('blur', e)), 1000);
+          if (elField.tagName === 'SELECT') {
+            nativeSelectValueSetter.call(elField, field.value);
+            elField.dispatchEvent(new Event('change', e));
+            setTimeout(() => elField.dispatchEvent(new Event('blur', e)), 1000);
+          } else {
+            document.querySelectorAll(
+              `[data-name="${field.clientId}"] input`,
+            ).forEach((element) => {
+              if (element.id.split(`${field.clientId}-`)[1] === field.value) {
+                if (!element.checked) {
+                  element.click();
+                  element.dispatchEvent(new Event('blur', e));
+                }
+              }
+            });
+          }
 
           break;
         case 'boolean':

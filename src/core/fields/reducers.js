@@ -12,7 +12,7 @@ const reducers = (state = {}, action) => {
               ...state.data[field],
               ...action.payload[field],
               key: field,
-              value: state.data[field].value,
+              value: state.data[field] ? state.data[field].value : '',
             }))
             .reduce(
               (fields, item) => ({
