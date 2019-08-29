@@ -8,13 +8,14 @@ import fieldsActions from 'core/fields/actions';
 import Field from 'components/Field';
 import AutofillButton from 'components/AutofillButton';
 import NextButton from 'components/NextButton';
+import manifest from '../manifest.json';
 
 import baseStyles from '../Styles';
 
 const styles = {
   ...baseStyles,
   header: {
-    fontFamily: `'Barlow Condensed', Arial, Helvetica, sans-serif`,
+    fontFamily: "'Barlow Condensed', Arial, Helvetica, sans-serif",
     background: '#37435c',
     padding: 15,
     fontSize: 18,
@@ -64,15 +65,25 @@ const App = ({
   function scrubFields() {
     const fields = Array.from(document.querySelectorAll('[class*="field-type--"]')).map((n, i) => {
       const elLabel = n.querySelector('label');
+      let labelText = '';
+
+      if (n.classList.contains('field-type--boolean-selector')) {
+        n.querySelectorAll('label').forEach((label, index) => {
+          if (index === 0) {
+            labelText = `${labelText}checked: "${label.innerText}"<br /> `;
+          } else {
+            labelText = `${labelText}unchecked: "${label.innerText}" `;
+          }
+        });
+      }
 
       return {
         id: i,
-        label: elLabel ? elLabel.innerText : n.innerText,
+        label: labelText || (elLabel ? elLabel.innerText : n.innerText),
         clientId: n.getAttribute('data-name'),
         type: n.classList[1].split('field-type--')[1] || '',
         hidden: n.classList.contains('is-hiden'),
         required: n.classList.contains('required'),
-        value: '',
       };
     });
 
@@ -124,7 +135,7 @@ const App = ({
       <h1 className={classes.header}>
         <small className={classes.domain}>{domainName}</small>
         OAO 4.0 Autofill
-        <small className={classes.version}>1.1.2</small>
+        <small className={classes.version}>{manifest.version}</small>
       </h1>
       <div className={classes.tools}>
         <div className={classes.cellL}>
@@ -151,11 +162,11 @@ const App = ({
         {currentFields.length > 0 ? (
           <ul>
             {currentFields.map(
-              clientId =>
-                fieldsData[`${prefix}${clientId}`] &&
-                fieldsData[`${prefix}${clientId}`].type !== 'html-element' &&
-                fieldsData[`${prefix}${clientId}`].type !== 'disclosure' &&
-                fieldsData[`${prefix}${clientId}`].type !== 'output' && (
+              clientId => fieldsData[`${prefix}${clientId}`]
+                && fieldsData[`${prefix}${clientId}`].type !== 'html-element'
+                && fieldsData[`${prefix}${clientId}`].type !== 'disclosure'
+                && fieldsData[`${prefix}${clientId}`].type !== 'output'
+                && (
                   <Field
                     key={clientId}
                     id={`${prefix}${clientId}`}
@@ -181,7 +192,16 @@ const App = ({
 };
 
 App.propTypes = {
-  classes: PropTypes.shape({}).isRequired,
+  classes: PropTypes.shape({
+    header: PropTypes.shape({}).isRequired,
+    domain: PropTypes.shape({}).isRequired,
+    version: PropTypes.shape({}).isRequired,
+    tools: PropTypes.shape({}).isRequired,
+    cellL: PropTypes.shape({}).isRequired,
+    cellR: PropTypes.shape({}).isRequired,
+    fields: PropTypes.shape({}).isRequired,
+    noFields: PropTypes.shape({}).isRequired,
+  }).isRequired,
   profileName: PropTypes.string.isRequired,
   domainName: PropTypes.string.isRequired,
   fieldsData: PropTypes.shape({}).isRequired,

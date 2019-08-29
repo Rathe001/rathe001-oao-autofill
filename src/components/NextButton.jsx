@@ -11,7 +11,7 @@ const styles = {
     margin: '0 5px 0 0',
     borderRadius: 10,
     border: 'none',
-    fontFamily: `'Barlow Condensed', Arial, Helvetica, sans-serif`,
+    fontFamily: '\'Barlow Condensed\', Arial, Helvetica, sans-serif',
     fontSize: 16,
     textTransform: 'uppercase',
     padding: '0 10px 2px 10px',
@@ -50,7 +50,9 @@ const NextButton = ({ classes }) => {
 };
 
 NextButton.propTypes = {
-  classes: PropTypes.shape({}).isRequired,
+  classes: PropTypes.shape({
+    btnPrimary: PropTypes.shape({}),
+  }).isRequired,
 };
 
 const mapStateToProps = () => ({});

@@ -39,6 +39,7 @@ function getInputType(type) {
   switch (type) {
     case 'multi-disclosures':
     case 'boolean':
+    case 'boolean-selector':
       return 'checkbox';
     case 'htmlElement':
     case 'output':
@@ -48,12 +49,22 @@ function getInputType(type) {
   }
 }
 
-const Field = ({ classes, setFieldValue, id, data = {} }) => {
+function createHtml(__html) {
+  return {
+    __html,
+  };
+}
+
+const Field = ({
+  classes,
+  setFieldValue,
+  id,
+  data = {},
+}) => {
   function onChangeField(el) {
-    const value =
-      getInputType(data.type) === 'checkbox' || getInputType(data.type) === 'radio'
-        ? el.checked
-        : el.value;
+    const value = getInputType(data.type) === 'checkbox' || getInputType(data.type) === 'radio'
+      ? el.checked
+      : el.value;
 
     setFieldValue(id, data, value);
   }
@@ -62,7 +73,7 @@ const Field = ({ classes, setFieldValue, id, data = {} }) => {
     <li key={data.id} className={classes.field}>
       <label className={classes.label} htmlFor={data.clientId}>
         <span className={classes.labelText}>
-          {data.label}
+          <span dangerouslySetInnerHTML={createHtml(data.label)} />
           :
           <br />
           <small className={classes.clientId}>{data.clientId}</small>
@@ -88,9 +99,24 @@ const Field = ({ classes, setFieldValue, id, data = {} }) => {
 };
 
 Field.propTypes = {
-  classes: PropTypes.shape({}).isRequired,
+  classes: PropTypes.shape({
+    field: PropTypes.shape({}).isRequired,
+    label: PropTypes.shape({}).isRequired,
+    labelText: PropTypes.shape({}).isRequired,
+    clientId: PropTypes.shape({}).isRequired,
+    labelInput: PropTypes.shape({}).isRequired,
+    type: PropTypes.shape({}).isRequired,
+  }).isRequired,
   id: PropTypes.string.isRequired,
-  data: PropTypes.shape({}).isRequired,
+  data: PropTypes.shape({
+    type: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
+    clientId: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+    value: PropTypes.string.isRequired,
+    hidden: PropTypes.bool.isRequired,
+    required: PropTypes.bool.isRequired,
+  }).isRequired,
   setFieldValue: PropTypes.func.isRequired,
 };
 

@@ -12,7 +12,7 @@ const styles = {
     margin: '0 5px 0 0',
     borderRadius: 10,
     border: 'none',
-    fontFamily: `'Barlow Condensed', Arial, Helvetica, sans-serif`,
+    fontFamily: "'Barlow Condensed', Arial, Helvetica, sans-serif",
     fontSize: 16,
     textTransform: 'uppercase',
     padding: '0 10px 2px 10px',
@@ -57,6 +57,24 @@ function setPageFields(fields) {
 
           break;
         case 'boolean':
+        case 'boolean-selector':
+          document.querySelectorAll(
+            `[data-name="${field.clientId}"] input`,
+          ).forEach((element, i) => {
+            if (i === 0 && !!field.value) {
+              if (!element.checked) {
+                element.click();
+                element.dispatchEvent(new Event('blur', e));
+              }
+            } else if (i === 1 && !field.value) {
+              if (!element.checked) {
+                element.click();
+                element.dispatchEvent(new Event('blur', e));
+              }
+            }
+          });
+
+          break;
         case 'multi-disclosures':
           if (!!elField.checked !== !!field.value) {
             elField.click();
@@ -86,7 +104,13 @@ function setPageFields(fields) {
   });
 }
 
-const AutofillButton = ({ classes, disabled, fieldsData, currentFields, prefix }) => {
+const AutofillButton = ({
+  classes,
+  disabled,
+  fieldsData,
+  currentFields,
+  prefix,
+}) => {
   const autofill = e => {
     e.preventDefault();
     const fields = currentFields.map(clientId => fieldsData[`${prefix}${clientId}`]);
@@ -107,7 +131,9 @@ const AutofillButton = ({ classes, disabled, fieldsData, currentFields, prefix }
 };
 
 AutofillButton.propTypes = {
-  classes: PropTypes.shape({}).isRequired,
+  classes: PropTypes.shape({
+    btnPrimary: PropTypes.shape({}),
+  }).isRequired,
   disabled: PropTypes.bool.isRequired,
   fieldsData: PropTypes.shape({}).isRequired,
   currentFields: PropTypes.arrayOf(PropTypes.string).isRequired,

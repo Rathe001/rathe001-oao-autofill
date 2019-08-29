@@ -63,7 +63,7 @@
   },
   "scripts": {
     "start": "node scripts/start.js",
-    "build": "INLINE_RUNTIME_CHUNK=false node scripts/build.js",
+    "build": "cp ./src/manifest.json ./public/manifest.json && INLINE_RUNTIME_CHUNK=false node scripts/build.js",
     "test": "node scripts/test.js"
   },
   "eslintConfig": {
@@ -135,6 +135,7 @@
     ]
   },
   "devDependencies": {
+    "@glu/eslint-config": "^1.0.3",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-prettier": "^4.3.0",
     "eslint-plugin-import": "^2.16.0",

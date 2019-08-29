@@ -1,7 +1,7 @@
 const styles = {
   '@import': [
-    `url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700')`,
-    `url('https://fonts.googleapis.com/css?family=Barlow+Condensed:300,400,500,600,700')`,
+    "url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700')",
+    "url('https://fonts.googleapis.com/css?family=Barlow+Condensed:300,400,500,600,700')",
   ],
   '@global': {
     '*': {
@@ -24,7 +24,7 @@ const styles = {
       fontWeight: 400,
       margin: 0,
       textTransform: 'uppercase',
-      fontFamily: `'Barlow Condensed', Arial, Helvetica, sans-serif`,
+      fontFamily: "'Barlow Condensed', Arial, Helvetica, sans-serif",
     },
     input: {
       padding: '3px 5px',

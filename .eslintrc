@@ -1,7 +1,6 @@
 {
   "env": {
-    "browser": true,
-    "node": true
+    "browser": true
   },
   "globals": {
     "chrome": true
@@ -13,7 +12,29 @@
       }
     }
   },
-  "extends": ["airbnb", "prettier"],
-  "plugins": ["prettier"],
-  "rules": {}
+  "extends": ["@glu/eslint-config"],
+  "parser": "babel-eslint",
+  "rules": {
+    "jsx-a11y/label-has-for": "off",
+    "jsx-a11y/anchor-is-valid": "off",
+    "jsx-a11y/click-events-have-key-events": 0,
+    "jsx-a11y/no-static-element-interactions": 0,
+    "import/extensions": "off",
+    "no-nested-ternary": ["error"],
+    "comma-dangle": ["error", "always-multiline"],
+    "react/destructuring-assignment": "off"
+  },
+  "overrides": [
+    {
+      "files": ["*.spec.jsx", "*.spec.js"],
+      "env": { "jest": true }
+    },
+    {
+      "files": [".storybook/**", "stories/**"],
+      "rules": {
+        "import/no-extraneous-dependencies": "off",
+        "react/jsx-filename-extension": 0
+      }
+    }
+  ]
 }

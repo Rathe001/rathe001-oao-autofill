@@ -6,8 +6,21 @@ const reducers = (state = {}, action) => {
       return {
         ...state,
         data: {
-          ...action.payload,
           ...state.data,
+          ...Object.keys(action.payload)
+            .map(field => ({
+              ...state.data[field],
+              ...action.payload[field],
+              key: field,
+              value: state.data[field].value,
+            }))
+            .reduce(
+              (fields, item) => ({
+                ...fields,
+                [item.key]: item,
+              }),
+              {},
+            ),
         },
       };
     case actions.SET_CURRENT:
