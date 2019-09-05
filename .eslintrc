@@ -8,29 +8,60 @@
   "settings": {
     "import/resolver": {
       "node": {
-        "paths": ["src", "./"]
+        "paths": [
+          "src",
+          "./"
+        ]
       }
     }
   },
-  "extends": ["@glu/eslint-config"],
+  "extends": [
+    "@glu/eslint-config",
+    "prettier",
+    "prettier/react"
+  ],
   "parser": "babel-eslint",
+  "plugins": [
+    "prettier"
+  ],
   "rules": {
     "jsx-a11y/label-has-for": "off",
     "jsx-a11y/anchor-is-valid": "off",
     "jsx-a11y/click-events-have-key-events": 0,
     "jsx-a11y/no-static-element-interactions": 0,
     "import/extensions": "off",
-    "no-nested-ternary": ["error"],
-    "comma-dangle": ["error", "always-multiline"],
-    "react/destructuring-assignment": "off"
+    "no-nested-ternary": [
+      "error"
+    ],
+    "comma-dangle": [
+      "error",
+      "always-multiline"
+    ],
+    "react/destructuring-assignment": "off",
+    "prettier/prettier": [
+      "error",
+      {
+        "trailingComma": "es5",
+        "singleQuote": true,
+        "printWidth": 100
+      }
+    ]
   },
   "overrides": [
     {
-      "files": ["*.spec.jsx", "*.spec.js"],
-      "env": { "jest": true }
+      "files": [
+        "*.spec.jsx",
+        "*.spec.js"
+      ],
+      "env": {
+        "jest": true
+      }
     },
     {
-      "files": [".storybook/**", "stories/**"],
+      "files": [
+        ".storybook/**",
+        "stories/**"
+      ],
       "rules": {
         "import/no-extraneous-dependencies": "off",
         "react/jsx-filename-extension": 0

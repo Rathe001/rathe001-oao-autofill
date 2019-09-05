@@ -19,7 +19,7 @@ const reducers = (state = {}, action) => {
                 ...fields,
                 [item.key]: item,
               }),
-              {},
+              {}
             ),
         },
       };
